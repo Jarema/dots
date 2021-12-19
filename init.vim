@@ -33,8 +33,10 @@ Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
 Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
 
+" debugging
 Plug 'mfussenegger/nvim-dap'
 
+" tree file viewer
 Plug 'kyazdani42/nvim-web-devicons' " for file icons
 Plug 'kyazdani42/nvim-tree.lua'
 
@@ -43,9 +45,14 @@ Plug 'tpope/vim-sleuth'
 Plug 'tpope/vim-dispatch'
 
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
+
+" git
 Plug 'tpope/vim-fugitive'
 Plug 'airblade/vim-gitgutter'
 Plug 'windwp/nvim-autopairs'
+
+
+" themes
 Plug 'jim-at-jibba/ariake-vim-colors' 
 Plug 'sainnhe/sonokai'
 Plug 'sainnhe/gruvbox-material'
@@ -55,8 +62,6 @@ Plug 'jim-at-jibba/ariake-vim-colors'
 
 call plug#end()
 
-:lang en_US.UTF-8
-set number
 if (has("termguicolors"))
  set termguicolors
 endif
@@ -67,6 +72,10 @@ syntax enable
 set background=dark
 colorscheme iceberg
 :set clipboard=unnamed
+
+
+:lang en_US.UTF-8
+set number
 
 let mapleader = " "
 
@@ -217,7 +226,7 @@ nnoremap <leader>fh <cmd>Telescope help_tags<cr>
 nnoremap <leader>fr <cmd>Telescope lsp_references<cr>
 nnoremap <leader>fd <cmd>Telescope lsp_definitions<cr>
 
-" aliases
+" Rust aliases
 :com Test Dispatch cargo test
 :com Check Dispatch cargo check
 :com Build Dispatch cargo Build
