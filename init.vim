@@ -21,7 +21,7 @@ Plug 'hrsh7th/cmp-path'
 Plug 'hrsh7th/cmp-buffer'
 
 " Snippet engine
-" Plug 'hrsh7th/vim-vsnip'
+Plug 'hrsh7th/vim-vsnip'
 
 Plug 'simrat39/rust-tools.nvim'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}  " We recommend updating the parsers on update
@@ -72,7 +72,7 @@ syntax enable
 set background=dark
 colorscheme iceberg
 :set clipboard=unnamed
-
+:highlight SpecialComment guifg=#6b7089
 
 :lang en_US.UTF-8
 set number
