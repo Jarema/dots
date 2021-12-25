@@ -182,7 +182,6 @@ require'nvim-treesitter.configs'.setup {
   },
 }
 
-require('rust-tools').setup({})
 
 require('nvim-tree').setup()
 EOF
