@@ -197,6 +197,8 @@ nnoremap <silent> g0    <cmd>lua vim.lsp.buf.document_symbol()<CR>
 nnoremap <silent> gW    <cmd>lua vim.lsp.buf.workspace_symbol()<CR>
 nnoremap <silent> gd    <cmd>lua vim.lsp.buf.definition()<CR>
 nnoremap <silent> ga    <cmd>lua vim.lsp.buf.code_action()<CR>
+nnoremap <silent> gs    <cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>
+
 nnoremap <silent> rn    <cmd>lua vim.lsp.buf.rename()<CR>
 nnoremap <leader>gh    <cmd>lua vim.lsp.buf.hover()<CR>
 nnoremap <leader>clre   <cmd>lua vim.lsp.codelens.refresh()<CR>
@@ -206,7 +208,7 @@ nnoremap <leader>clrr   <cmd>lua vim.lsp.codelens.run()<CR>
 " 300ms of no cursor movement to trigger CursorHold
 let g:cursorhold_updatetime=300
 " Show diagnostic popup on cursor hold
-autocmd CursorHold,CursorHoldI * lua vim.lsp.diagnostic.show_line_diagnostics({focusable=false})
+" autocmd CursorHold,CursorHoldI * lua vim.lsp.diagnostic.show_line_diagnostics({focusable=false})
 
 " nvim-tree
 nnoremap <C-n> :NvimTreeToggle<CR>
