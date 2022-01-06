@@ -60,6 +60,8 @@ Plug 'shaunsingh/nord.nvim'
 Plug 'cocopon/iceberg.vim'
 Plug 'jim-at-jibba/ariake-vim-colors'
 
+Plug 'ggandor/lightspeed.nvim'
+
 call plug#end()
 
 if (has("termguicolors"))
