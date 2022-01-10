@@ -49,6 +49,7 @@ Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 " git
 Plug 'tpope/vim-fugitive'
 Plug 'airblade/vim-gitgutter'
+
 Plug 'windwp/nvim-autopairs'
 
 
@@ -59,6 +60,12 @@ Plug 'sainnhe/gruvbox-material'
 Plug 'shaunsingh/nord.nvim'
 Plug 'cocopon/iceberg.vim'
 Plug 'jim-at-jibba/ariake-vim-colors'
+
+" tabs
+Plug 'kyazdani42/nvim-web-devicons'
+Plug 'romgrk/barbar.nvim'
+
+Plug 'rcarriga/nvim-notify'
 
 Plug 'ggandor/lightspeed.nvim'
 
@@ -133,7 +140,8 @@ local opts = {
             ["rust-analyzer"] = {
                 -- enable clippy on save
                 checkOnSave = {
-                    command = "clippy"
+                    command = "clippy",
+                    targets = "all"
                 },
             }
         }
@@ -186,6 +194,7 @@ require'nvim-treesitter.configs'.setup {
 
 
 require('nvim-tree').setup()
+vim.notify = require('notify')
 EOF
 
 " Code navigation shortcuts
@@ -228,6 +237,29 @@ nnoremap <leader>fb <cmd>Telescope buffers<cr>
 nnoremap <leader>fh <cmd>Telescope help_tags<cr>
 nnoremap <leader>fr <cmd>Telescope lsp_references<cr>
 nnoremap <leader>fd <cmd>Telescope lsp_definitions<cr>
+
+" Tabs setup
+" Move to previous/next
+nnoremap <silent>    <A-,> :BufferPrevious<CR>
+nnoremap <silent>    <A-.> :BufferNext<CR>
+" Re-order to previous/next
+nnoremap <silent>    <A-<> :BufferMovePrevious<CR>
+nnoremap <silent>    <A->> :BufferMoveNext<CR>
+" Goto buffer in position...
+nnoremap <silent>    <A-1> :BufferGoto 1<CR>
+nnoremap <silent>    <A-2> :BufferGoto 2<CR>
+nnoremap <silent>    <A-3> :BufferGoto 3<CR>
+nnoremap <silent>    <A-4> :BufferGoto 4<CR>
+nnoremap <silent>    <A-5> :BufferGoto 5<CR>
+nnoremap <silent>    <A-6> :BufferGoto 6<CR>
+nnoremap <silent>    <A-7> :BufferGoto 7<CR>
+nnoremap <silent>    <A-8> :BufferGoto 8<CR>
+nnoremap <silent>    <A-9> :BufferLast<CR>
+" Pin/unpin buffer
+nnoremap <silent>    <A-p> :BufferPin<CR>
+" Close buffer
+nnoremap <silent>    <A-c> :BufferClose<CR>
+
 
 " Rust aliases
 :com Test Dispatch cargo test
