@@ -48,6 +48,7 @@ Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 
 " git
 Plug 'tpope/vim-fugitive'
+Plug 'tommcdo/vim-fugitive-blame-ext'
 Plug 'airblade/vim-gitgutter'
 
 Plug 'windwp/nvim-autopairs'
@@ -69,6 +70,9 @@ Plug 'rcarriga/nvim-notify'
 
 Plug 'ggandor/lightspeed.nvim'
 
+" markdown
+" Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
+
 call plug#end()
 
 if (has("termguicolors"))
@@ -78,6 +82,7 @@ endif
 " Theme
 " let g:sonokai_style = 'andromeda'
 syntax enable
+filetype plugin indent on
 set background=dark
 colorscheme iceberg
 :set clipboard=unnamed
@@ -85,6 +90,7 @@ colorscheme iceberg
 
 :lang en_US.UTF-8
 set number
+set mouse=a
 
 let mapleader = " "
 
@@ -114,6 +120,20 @@ nvim_lsp.gopls.setup {
       },
       staticcheck = true,
     },
+  },
+}
+
+nvim_lsp.denols.setup {
+  on_attach = on_attach,
+  init_options = {
+    lint = true,
+  },
+}
+
+nvim_lsp.tsserver.setup {
+  on_attach = on_attach,
+  init_options = {
+    lint = true,
   },
 }
 
@@ -198,7 +218,6 @@ vim.notify = require('notify')
 EOF
 
 " Code navigation shortcuts
-nnoremap <silent> <c-]> <cmd>lua vim.lsp.buf.definition()<CR>
 nnoremap <silent> K     <cmd>lua vim.lsp.buf.hover()<CR>
 nnoremap <silent> gD    <cmd>lua vim.lsp.buf.implementation()<CR>
 nnoremap <silent> <c-k> <cmd>lua vim.lsp.buf.signature_help()<CR>
@@ -209,11 +228,12 @@ nnoremap <silent> gW    <cmd>lua vim.lsp.buf.workspace_symbol()<CR>
 nnoremap <silent> gd    <cmd>lua vim.lsp.buf.definition()<CR>
 nnoremap <silent> ga    <cmd>lua vim.lsp.buf.code_action()<CR>
 nnoremap <silent> gs    <cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>
+nnoremap <silent> gn    <cmd>lua vim.lsp.diagnostic.get_next()<CR>
 
 nnoremap <silent> rn    <cmd>lua vim.lsp.buf.rename()<CR>
 nnoremap <leader>gh    <cmd>lua vim.lsp.buf.hover()<CR>
-nnoremap <leader>clre   <cmd>lua vim.lsp.codelens.refresh()<CR>
-nnoremap <leader>clrr   <cmd>lua vim.lsp.codelens.run()<CR>
+nnoremap <leader>clr   <cmd>lua vim.lsp.codelens.refresh()<CR>
+nnoremap <leader>cle   <cmd>lua vim.lsp.codelens.run()<CR>
 
 " Set updatetime for CursorHold
 " 300ms of no cursor movement to trigger CursorHold
@@ -243,8 +263,8 @@ nnoremap <leader>fd <cmd>Telescope lsp_definitions<cr>
 nnoremap <silent>    <A-,> :BufferPrevious<CR>
 nnoremap <silent>    <A-.> :BufferNext<CR>
 " Re-order to previous/next
-nnoremap <silent>    <A-<> :BufferMovePrevious<CR>
-nnoremap <silent>    <A->> :BufferMoveNext<CR>
+nnoremap <silent>    <≤> :BufferMovePrevious<CR>
+nnoremap <silent>    <≥> :BufferMoveNext<CR>
 " Goto buffer in position...
 nnoremap <silent>    <A-1> :BufferGoto 1<CR>
 nnoremap <silent>    <A-2> :BufferGoto 2<CR>
@@ -260,6 +280,14 @@ nnoremap <silent>    <A-p> :BufferPin<CR>
 " Close buffer
 nnoremap <silent>    <A-c> :BufferClose<CR>
 
+" markdown-preview config
+"" set to 1, nvim will open the preview window after entering the markdown buffer
+" default: 0
+let g:mkdp_auto_start = 0 
+" set to 1, the nvim will auto close current preview window when change
+" from markdown buffer to another buffer
+" default: 1
+let g:mkdp_auto_close = 1
 
 " Rust aliases
 :com Test Dispatch cargo test
@@ -270,6 +298,13 @@ nnoremap <silent>    <A-c> :BufferClose<CR>
 
 " formatting code
 autocmd BufWritePre *.rs,*.go lua vim.lsp.buf.formatting_sync(nil, 500)
+
+" set auto read files on change
+set autoread
+au FocusGained * :checktime
+
+" write on exit insert mdoe
+:autocmd InsertLeave * silent! update
 
 :set number
 
