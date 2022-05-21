@@ -211,7 +211,6 @@ require'nvim-treesitter.configs'.setup {
   },
 }
 
-
 require('nvim-tree').setup()
 vim.notify = require('notify')
 EOF
