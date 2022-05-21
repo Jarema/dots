@@ -105,7 +105,6 @@ set completeopt=menuone,noinsert,noselect
 set shortmess+=c
 
 
-
 lua << EOF
 
 require('nvim-autopairs').setup{}
