@@ -105,7 +105,6 @@ set completeopt=menuone,noinsert,noselect
 set shortmess+=c
 
 
-
 lua << EOF
 
 require('nvim-autopairs').setup{}
@@ -211,7 +210,6 @@ require'nvim-treesitter.configs'.setup {
     highlight_current_scope = { enable = true },
   },
 }
-
 
 require('nvim-tree').setup()
 vim.notify = require('notify')
