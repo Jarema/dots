@@ -212,10 +212,10 @@ cmp.setup({
 
 require'nvim-treesitter.configs'.setup {
   refactor = {
-      highlight_definitions = { enable = true },
-      highlight_current_scope = { enable = true },
-    }
-  }
+    highlight_definitions = { enable = true },
+    highlight_current_scope = { enable = true },
+  },
+}
 
 require('nvim-tree').setup()
 vim.notify = require('notify')
