@@ -22,7 +22,6 @@ Plug 'hrsh7th/cmp-buffer'
 
 " Snippet engine
 Plug 'hrsh7th/vim-vsnip'
-
 Plug 'simrat39/rust-tools.nvim'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}  " We recommend updating the parsers on update
 Plug 'nvim-treesitter/nvim-treesitter-refactor'
@@ -69,7 +68,10 @@ Plug 'romgrk/barbar.nvim'
 Plug 'rcarriga/nvim-notify'
 
 Plug 'ggandor/lightspeed.nvim'
+Plug 'kylechui/nvim-surround'
 
+Plug 'github/copilot.vim'
+Plug 'voldikss/vim-floaterm'
 " markdown
 " Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
 
@@ -103,7 +105,6 @@ set completeopt=menuone,noinsert,noselect
 
 " Avoid showing extra messages when using completion
 set shortmess+=c
-
 
 lua << EOF
 
@@ -157,6 +158,9 @@ local opts = {
             -- to enable rust-analyzer settings visit:
             -- https://github.com/rust-analyzer/rust-analyzer/blob/master/docs/user/generated_config.adoc
             ["rust-analyzer"] = {
+              diagnostics = {
+                disabled = { "unresolved-proc-macro" }
+                },
                 -- enable clippy on save
                 checkOnSave = {
                     command = "clippy",
@@ -200,19 +204,22 @@ cmp.setup({
     { name = 'vsnip' },
     { name = 'path' },
     { name = 'buffer' },
+    { name = 'copilot'},
   },
 })
 
 
+
 require'nvim-treesitter.configs'.setup {
   refactor = {
-    highlight_definitions = { enable = true },
-    highlight_current_scope = { enable = true },
-  },
-}
+      highlight_definitions = { enable = true },
+      highlight_current_scope = { enable = true },
+    }
+  }
 
 require('nvim-tree').setup()
 vim.notify = require('notify')
+
 EOF
 
 " Code navigation shortcuts
@@ -232,6 +239,9 @@ nnoremap <silent> rn    <cmd>lua vim.lsp.buf.rename()<CR>
 nnoremap <leader>gh    <cmd>lua vim.lsp.buf.hover()<CR>
 nnoremap <leader>clr   <cmd>lua vim.lsp.codelens.refresh()<CR>
 nnoremap <leader>cle   <cmd>lua vim.lsp.codelens.run()<CR>
+nnoremap <leader>ft    <cmd>:FloatermNew --name=myfloat --height=0.8 --width=0.7 --autoclose=2 <CR>
+nnoremap   <silent>   <F12>   :FloatermToggle<CR>
+noremap <Leader>s :update<CR>
 
 " Set updatetime for CursorHold
 " 300ms of no cursor movement to trigger CursorHold
@@ -295,7 +305,10 @@ let g:mkdp_auto_close = 1
 :com Run Dispatch cargo run
 
 " formatting code
-autocmd BufWritePre *.rs,*.go lua vim.lsp.buf.formatting_sync(nil, 500)
+autocmd BufWritePre *.rs,*.go lua vim.lsp.buf.formatting_sync()
+
+" spellcheck
+setlocal spell spelllang=en_us
 
 " set auto read files on change
 set autoread
