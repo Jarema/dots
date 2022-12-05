@@ -47,9 +47,8 @@ Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 
 " git
 Plug 'tpope/vim-fugitive'
-Plug 'tommcdo/vim-fugitive-blame-ext'
 Plug 'airblade/vim-gitgutter'
-
+Plug 'f-person/git-blame.nvim'
 Plug 'windwp/nvim-autopairs'
 
 
@@ -140,7 +139,6 @@ nvim_lsp.tsserver.setup {
 local opts = {
     tools = { -- rust-tools options
         autoSetHints = true,
-        hover_with_actions = true,
         inlay_hints = {
             show_parameter_hints = true,
             parameter_hints_prefix = "",
@@ -164,10 +162,10 @@ local opts = {
                 -- enable clippy on save
                 checkOnSave = {
                     command = "clippy",
-                    targets = "all"
+                    targets = "all",
                 },
-            }
-        }
+            },
+        },
     },
 }
 
@@ -212,10 +210,10 @@ cmp.setup({
 
 require'nvim-treesitter.configs'.setup {
   refactor = {
-    highlight_definitions = { enable = true },
-    highlight_current_scope = { enable = true },
-  },
-}
+      highlight_definitions = { enable = true },
+      highlight_current_scope = { enable = true },
+    }
+  }
 
 require('nvim-tree').setup()
 vim.notify = require('notify')
@@ -232,8 +230,8 @@ nnoremap <silent> g0    <cmd>lua vim.lsp.buf.document_symbol()<CR>
 nnoremap <silent> gW    <cmd>lua vim.lsp.buf.workspace_symbol()<CR>
 nnoremap <silent> gd    <cmd>lua vim.lsp.buf.definition()<CR>
 nnoremap <silent> ga    <cmd>lua vim.lsp.buf.code_action()<CR>
-nnoremap <silent> gs    <cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>
-nnoremap <silent> gn    <cmd>lua vim.lsp.diagnostic.get_next()<CR>
+nnoremap <silent> gs    <cmd>lua vim.diagnostic.open_float()<CR>
+nnoremap <silent> gn    <cmd>lua vim.diagnostic.get_next()<CR>
 
 nnoremap <silent> rn    <cmd>lua vim.lsp.buf.rename()<CR>
 nnoremap <leader>gh    <cmd>lua vim.lsp.buf.hover()<CR>
@@ -247,7 +245,7 @@ noremap <Leader>s :update<CR>
 " 300ms of no cursor movement to trigger CursorHold
 let g:cursorhold_updatetime=300
 " Show diagnostic popup on cursor hold
-" autocmd CursorHold,CursorHoldI * lua vim.lsp.diagnostic.show_line_diagnostics({focusable=false})
+" autocmd CursorHold,CursorHoldI * lua vim.diagnostic.show_line_diagnostics({focusable=false})
 
 " nvim-tree
 nnoremap <C-n> :NvimTreeToggle<CR>
@@ -255,8 +253,8 @@ nnoremap <leader>r :NvimTreeRefresh<CR>
 nnoremap <leader>n :NvimTreeFindFile<CR>
 
 " Goto previous/next diagnostic warning/error
-nnoremap <silent> g[ <cmd>lua vim.lsp.diagnostic.goto_prev()<CR>
-nnoremap <silent> g] <cmd>lua vim.lsp.diagnostic.goto_next()<CR>
+nnoremap <silent> g[ <cmd>lua vim.diagnostic.goto_prev()<CR>
+nnoremap <silent> g] <cmd>lua vim.diagnostic.goto_next()<CR>
 
 " telescope
 nnoremap <leader>ff <cmd>Telescope find_files<cr>
