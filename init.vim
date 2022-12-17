@@ -31,6 +31,7 @@ Plug 'nvim-lua/popup.nvim'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
 Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
+Plug 'AckslD/nvim-neoclip.lua'
 
 " debugging
 Plug 'mfussenegger/nvim-dap'
@@ -71,6 +72,9 @@ Plug 'kylechui/nvim-surround'
 
 Plug 'github/copilot.vim'
 Plug 'voldikss/vim-floaterm'
+
+" reviews
+Plug 'pwntester/octo.nvim'
 " markdown
 " Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
 
@@ -106,7 +110,9 @@ set completeopt=menuone,noinsert,noselect
 set shortmess+=c
 
 lua << EOF
-
+require('telescope').load_extension('neoclip')
+require('neoclip').setup()
+require('octo').setup()
 require('nvim-autopairs').setup{}
 
 local nvim_lsp = require'lspconfig'
@@ -263,6 +269,9 @@ nnoremap <leader>fb <cmd>Telescope buffers<cr>
 nnoremap <leader>fh <cmd>Telescope help_tags<cr>
 nnoremap <leader>fr <cmd>Telescope lsp_references<cr>
 nnoremap <leader>fd <cmd>Telescope lsp_definitions<cr>
+nnoremap <leader>fi <cmd>Telescope lsp_implementations<cr>
+nnoremap <leader>fd <cmd>Telescope lsp_type_definitions<cr>
+nnoremap <leader>p <cmd>Telescope neoclip<cr>
 
 " Tabs setup
 " Move to previous/next
