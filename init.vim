@@ -25,7 +25,7 @@ Plug 'hrsh7th/vim-vsnip'
 Plug 'simrat39/rust-tools.nvim'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}  " We recommend updating the parsers on update
 Plug 'nvim-treesitter/nvim-treesitter-refactor'
-
+Plug 'mfussenegger/nvim-treehopper'
 " telescope
 Plug 'nvim-lua/popup.nvim'
 Plug 'nvim-lua/plenary.nvim'
@@ -34,7 +34,7 @@ Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
 Plug 'AckslD/nvim-neoclip.lua'
 
 " debugging
-Plug 'mfussenegger/nvim-dap'
+" Plug 'mfussenegger/nvim-dap'
 
 " tree file viewer
 Plug 'kyazdani42/nvim-web-devicons' " for file icons
@@ -83,6 +83,7 @@ call plug#end()
 if (has("termguicolors"))
  set termguicolors
 endif
+set shell=/bin/bash
 
 " Theme
 " let g:sonokai_style = 'andromeda'
@@ -168,7 +169,6 @@ local opts = {
                 -- enable clippy on save
                 checkOnSave = {
                     command = "clippy",
-                    targets = "all",
                 },
             },
         },
@@ -215,15 +215,34 @@ cmp.setup({
 
 
 require'nvim-treesitter.configs'.setup {
+  ensure_installed = { "go", "rust", "typescript" },
+  -- Install parsers synchronously (only applied to `ensure_installed`)
+  sync_install = false,
+  highlight = {
+    -- `false` will disable the whole extension
+    enable = true,
+  },
+  -- Automatically install missing parsers when entering buffer
+  -- Recommendation: set to false if you don't have `tree-sitter` CLI installed locally
+  auto_install = true,
   refactor = {
       highlight_definitions = { enable = true },
       highlight_current_scope = { enable = true },
-    }
+    },
+  incremental_selection = {
+    enable = true,
+    keymaps = {
+      init_selection = "<leader>a", -- set to `false` to disable one of the mappings
+      node_incremental = "<leader>ai",
+      scope_incremental = "<leader>as",
+      node_decremental = "<leader>ar",
+    },
+  },
   }
 
 require('nvim-tree').setup()
 vim.notify = require('notify')
-
+vim.cmd [[autocmd BufWritePre * lua vim.lsp.buf.formatting_sync()]]
 EOF
 
 " Code navigation shortcuts
@@ -249,7 +268,7 @@ noremap <Leader>s :update<CR>
 
 " Set updatetime for CursorHold
 " 300ms of no cursor movement to trigger CursorHold
-let g:cursorhold_updatetime=300
+" let g:cursorhold_updatetime=300
 " Show diagnostic popup on cursor hold
 " autocmd CursorHold,CursorHoldI * lua vim.diagnostic.show_line_diagnostics({focusable=false})
 
@@ -263,6 +282,7 @@ nnoremap <silent> g[ <cmd>lua vim.diagnostic.goto_prev()<CR>
 nnoremap <silent> g] <cmd>lua vim.diagnostic.goto_next()<CR>
 
 " telescope
+nnoremap <leader>c <cmd>Telescope commands<cr>
 nnoremap <leader>ff <cmd>Telescope find_files<cr>
 nnoremap <leader>fg <cmd>Telescope live_grep<cr>
 nnoremap <leader>fb <cmd>Telescope buffers<cr>
@@ -272,6 +292,10 @@ nnoremap <leader>fd <cmd>Telescope lsp_definitions<cr>
 nnoremap <leader>fi <cmd>Telescope lsp_implementations<cr>
 nnoremap <leader>fd <cmd>Telescope lsp_type_definitions<cr>
 nnoremap <leader>p <cmd>Telescope neoclip<cr>
+nnoremap <leader>t <cmd>Telescope treesitter<cr>
+
+omap     <silent> m :<C-U>lua require('tsht').nodes()<CR>
+xnoremap <silent> m :lua require('tsht').nodes()<CR>
 
 " Tabs setup
 " Move to previous/next
@@ -312,7 +336,7 @@ let g:mkdp_auto_close = 1
 :com Run Dispatch cargo run
 
 " formatting code
-autocmd BufWritePre *.rs,*.go lua vim.lsp.buf.formatting_sync()
+" autocmd BufWritePre *.rs,*.go lua vim.lsp.buf.formatting_sync()
 
 " spellcheck
 setlocal spell spelllang=en_us
@@ -322,7 +346,7 @@ set autoread
 au FocusGained * :checktime
 
 " write on exit insert mdoe
-:autocmd InsertLeave * silent! update
+" :autocmd InsertLeave * silent! update
 
 :set number
 
