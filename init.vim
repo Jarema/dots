@@ -33,6 +33,9 @@ Plug 'nvim-telescope/telescope.nvim'
 Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
 Plug 'AckslD/nvim-neoclip.lua'
 
+" replace
+Plug 'windwp/nvim-spectre'
+
 " debugging
 " Plug 'mfussenegger/nvim-dap'
 
@@ -221,6 +224,14 @@ require'nvim-treesitter.configs'.setup {
   highlight = {
     -- `false` will disable the whole extension
     enable = true,
+
+    disable = function(lang, buf)
+        local max_filesize = 200 * 1024 -- 100 KB
+        local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
+        if ok and stats and stats.size > max_filesize then
+            return true
+        end
+    end,
   },
   -- Automatically install missing parsers when entering buffer
   -- Recommendation: set to false if you don't have `tree-sitter` CLI installed locally
@@ -274,7 +285,7 @@ noremap <Leader>s :update<CR>
 
 " nvim-tree
 nnoremap <C-n> :NvimTreeToggle<CR>
-nnoremap <leader>r :NvimTreeRefresh<CR>
+nnoremap <leader>rr :NvimTreeRefresh<CR>
 nnoremap <leader>n :NvimTreeFindFile<CR>
 
 " Goto previous/next diagnostic warning/error
@@ -318,6 +329,16 @@ nnoremap <silent>    <A-9> :BufferLast<CR>
 nnoremap <silent>    <A-p> :BufferPin<CR>
 " Close buffer
 nnoremap <silent>    <A-c> :BufferClose<CR>
+
+" replace
+nnoremap <leader>r <cmd>lua require('spectre').open()<CR>
+
+"search current word
+nnoremap <leader>rw <cmd>lua require('spectre').open_visual({select_word=true})<CR>
+vnoremap <leader>r <esc>:lua require('spectre').open_visual()<CR>
+"  search in current file
+nnoremap <leader>rp viw:lua require('spectre').open_file_search()<cr>
+" run command :Spectre
 
 " markdown-preview config
 "" set to 1, nvim will open the preview window after entering the markdown buffer
