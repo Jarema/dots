@@ -10,6 +10,9 @@ Plug 'neovim/nvim-lspconfig'
 " Completion framework
 Plug 'hrsh7th/nvim-cmp'
 
+" Formatting on save
+Plug 'lukas-reineke/lsp-format.nvim'
+
 " LSP completion source for nvim-cmp
 Plug 'hrsh7th/cmp-nvim-lsp'
 
@@ -57,12 +60,12 @@ Plug 'windwp/nvim-autopairs'
 
 
 " themes
-Plug 'jim-at-jibba/ariake-vim-colors' 
-Plug 'sainnhe/sonokai'
-Plug 'sainnhe/gruvbox-material'
-Plug 'shaunsingh/nord.nvim'
+" Plug 'jim-at-jibba/ariake-vim-colors' 
+" Plug 'sainnhe/sonokai'
+" Plug 'sainnhe/gruvbox-material'
+" Plug 'shaunsingh/nord.nvim'
 Plug 'cocopon/iceberg.vim'
-Plug 'jim-at-jibba/ariake-vim-colors'
+" Plug 'jim-at-jibba/ariake-vim-colors'
 
 " tabs
 Plug 'kyazdani42/nvim-web-devicons'
@@ -76,8 +79,6 @@ Plug 'kylechui/nvim-surround'
 Plug 'github/copilot.vim'
 Plug 'voldikss/vim-floaterm'
 
-" reviews
-Plug 'pwntester/octo.nvim'
 " markdown
 " Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
 
@@ -116,11 +117,12 @@ set shortmess+=c
 lua << EOF
 require('telescope').load_extension('neoclip')
 require('neoclip').setup()
-require('octo').setup()
 require('nvim-autopairs').setup{}
+require("lsp-format").setup {}
 
 local nvim_lsp = require'lspconfig'
 nvim_lsp.gopls.setup {
+  on_attach = require("lsp-format").on_attach,
   cmd = {"gopls", "serve"},
   settings = {
     gopls = {
@@ -133,14 +135,14 @@ nvim_lsp.gopls.setup {
 }
 
 nvim_lsp.denols.setup {
-  on_attach = on_attach,
+  on_attach = require("lsp-format").on_attach,
   init_options = {
     lint = true,
   },
 }
 
 nvim_lsp.tsserver.setup {
-  on_attach = on_attach,
+  on_attach = require("lsp-format").on_attach,
   init_options = {
     lint = true,
   },
@@ -160,6 +162,7 @@ local opts = {
     -- these override the defaults set by rust-tools.nvim
     -- see https://github.com/neovim/nvim-lspconfig/blob/master/CONFIG.md#rust_analyzer
     server = {
+        on_attach = require("lsp-format").on_attach,
         -- on_attach is a callback called when the language server attachs to the buffer
         -- on_attach = on_attach,
         settings = {
@@ -224,24 +227,33 @@ require'nvim-treesitter.configs'.setup {
   highlight = {
     -- `false` will disable the whole extension
     enable = true,
-
     disable = function(lang, buf)
-        local max_filesize = 200 * 1024 -- 100 KB
-        local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
-        if ok and stats and stats.size > max_filesize then
-            return true
-        end
+      return vim.api.nvim_buf_line_count(buf) > 50000
     end,
   },
   -- Automatically install missing parsers when entering buffer
   -- Recommendation: set to false if you don't have `tree-sitter` CLI installed locally
   auto_install = true,
   refactor = {
-      highlight_definitions = { enable = true },
-      highlight_current_scope = { enable = true },
+    smart_rename = {
+      enable = true,
+      keymaps = {
+        smart_rename = "<leader>rs",
+      },
     },
+    highlight_definitions = { 
+      enable = true,
+      disable = function(lang, buf)
+        return vim.api.nvim_buf_line_count(buf) > 50000
+      end,
+    },
+    highlight_current_scope = { enable = false },
+  },
   incremental_selection = {
     enable = true,
+    disable = function(lang, buf)
+      return vim.api.nvim_buf_line_count(buf) > 50000
+    end,
     keymaps = {
       init_selection = "<leader>a", -- set to `false` to disable one of the mappings
       node_incremental = "<leader>ai",
@@ -249,11 +261,10 @@ require'nvim-treesitter.configs'.setup {
       node_decremental = "<leader>ar",
     },
   },
-  }
+}
 
 require('nvim-tree').setup()
 vim.notify = require('notify')
-vim.cmd [[autocmd BufWritePre * lua vim.lsp.buf.formatting_sync()]]
 EOF
 
 " Code navigation shortcuts
@@ -304,7 +315,10 @@ nnoremap <leader>fi <cmd>Telescope lsp_implementations<cr>
 nnoremap <leader>fd <cmd>Telescope lsp_type_definitions<cr>
 nnoremap <leader>p <cmd>Telescope neoclip<cr>
 nnoremap <leader>t <cmd>Telescope treesitter<cr>
-
+nnoremap <leader>re <cmd>Telescope resume<cr>
+nnoremap <leader>fm <cmd>Telescope marks<cr>
+nnoremap <leader>fm <cmd>Telescope marks<cr>
+nnoremap <leader>tt <cmd>Telescope lsp_dynamic_workspace_symbols<cr>
 omap     <silent> m :<C-U>lua require('tsht').nodes()<CR>
 xnoremap <silent> m :lua require('tsht').nodes()<CR>
 
