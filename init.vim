@@ -36,6 +36,8 @@ Plug 'nvim-telescope/telescope.nvim'
 Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
 Plug 'AckslD/nvim-neoclip.lua'
 
+Plug 'rhysd/vim-fixjson'
+
 " replace
 Plug 'windwp/nvim-spectre'
 
@@ -51,6 +53,8 @@ Plug 'tpope/vim-sleuth'
 Plug 'tpope/vim-dispatch'
 
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
+
+Plug 'hashivim/vim-terraform'
 
 " git
 Plug 'tpope/vim-fugitive'
@@ -80,7 +84,7 @@ Plug 'github/copilot.vim'
 Plug 'voldikss/vim-floaterm'
 
 " markdown
-" Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
+Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
 
 call plug#end()
 
@@ -134,6 +138,10 @@ nvim_lsp.gopls.setup {
   },
 }
 
+require'lspconfig'.sourcekit.setup{
+  cmd = {'/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/sourcekit-lsp'}
+}
+
 nvim_lsp.denols.setup {
   on_attach = require("lsp-format").on_attach,
   init_options = {
@@ -169,6 +177,9 @@ local opts = {
             -- to enable rust-analyzer settings visit:
             -- https://github.com/rust-analyzer/rust-analyzer/blob/master/docs/user/generated_config.adoc
             ["rust-analyzer"] = {
+              cargo = {
+                 features = "all",
+                },
               diagnostics = {
                 disabled = { "unresolved-proc-macro" }
                 },
@@ -317,7 +328,6 @@ nnoremap <leader>p <cmd>Telescope neoclip<cr>
 nnoremap <leader>t <cmd>Telescope treesitter<cr>
 nnoremap <leader>re <cmd>Telescope resume<cr>
 nnoremap <leader>fm <cmd>Telescope marks<cr>
-nnoremap <leader>fm <cmd>Telescope marks<cr>
 nnoremap <leader>tt <cmd>Telescope lsp_dynamic_workspace_symbols<cr>
 omap     <silent> m :<C-U>lua require('tsht').nodes()<CR>
 xnoremap <silent> m :lua require('tsht').nodes()<CR>
@@ -370,15 +380,16 @@ let g:mkdp_auto_close = 1
 :com Clippy Dispatch cargo clippy --all-features
 :com Run Dispatch cargo run
 
-" formatting code
-" autocmd BufWritePre *.rs,*.go lua vim.lsp.buf.formatting_sync()
-
 " spellcheck
 setlocal spell spelllang=en_us
 
 " set auto read files on change
 set autoread
-au FocusGained * :checktime
+au FocusGained,WinLeave,WinEnter,FocusLost,BufEnter * :checktime
+
+
+" hcl formatting for NATS configs
+au BufRead,BufNewFile *.conf setfiletype hcl
 
 " write on exit insert mdoe
 " :autocmd InsertLeave * silent! update
