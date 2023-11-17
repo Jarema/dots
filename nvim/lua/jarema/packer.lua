@@ -96,7 +96,20 @@ return require('packer').startup(function(use)
         'nvim-lualine/lualine.nvim',
         requires = { 'nvim-tree/nvim-web-devicons', opt = true }
     }
-    use { 'echasnovski/mini.files', branch = 'stable',
+    use { 'echasnovski/mini.nvim', branch = 'stable',
         requires = { 'nvim-tree/nvim-web-devicons', opt = true }
+    }
+
+    use {
+        "folke/which-key.nvim",
+        config = function()
+            vim.o.timeout = true
+            vim.o.timeoutlen = 300
+            require("which-key").setup {
+                -- your configuration comes here
+                -- or leave it empty to use the default settings
+                -- refer to the configuration section below
+            }
+        end
     }
 end)
