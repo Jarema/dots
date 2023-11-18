@@ -9,7 +9,11 @@ lsp.ensure_installed({
 
 })
 
-require('lspconfig').sourcekit.setup {}
+require('lspconfig').sourcekit.setup {
+    cmd = { "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/sourcekit-lsp" },
+    filetypes = { "swift" },
+    root_dir = require('lspconfig/util').root_pattern("Package.swift", ".git"),
+}
 
 -- Fix Undefined global 'vim'
 lsp.nvim_workspace()
