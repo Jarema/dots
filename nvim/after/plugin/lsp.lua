@@ -9,10 +9,26 @@ lsp.ensure_installed({
 
 })
 
+local on_attach = function(client, bufnr)
+    local opts = { buffer = bufnr, remap = false }
+    lsp.buffer_autoformat()
+
+    vim.keymap.set("n", "gd", function() vim.lsp.buf.definition() end, opts)
+    vim.keymap.set("n", "K", function() vim.lsp.buf.hover() end, opts)
+    vim.keymap.set("n", "<leader>vd", function() vim.diagnostic.open_float() end, opts)
+    vim.keymap.set("n", "[d", function() vim.diagnostic.goto_next() end, opts)
+    vim.keymap.set("n", "]d", function() vim.diagnostic.goto_prev() end, opts)
+    vim.keymap.set("n", "ga", function() vim.lsp.buf.code_action() end, opts)
+    vim.keymap.set("n", "gr", function() vim.lsp.buf.references() end, opts)
+    vim.keymap.set("n", "<leader>r", function() vim.lsp.buf.rename() end, opts)
+    vim.keymap.set("i", "gh", function() vim.lsp.buf.signature_help() end, opts)
+end
+
 require('lspconfig').sourcekit.setup {
     cmd = { "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/sourcekit-lsp" },
     filetypes = { "swift" },
     root_dir = require('lspconfig/util').root_pattern("Package.swift", ".git"),
+    on_attach = on_attach,
 }
 
 -- Fix Undefined global 'vim'
@@ -44,22 +60,8 @@ lsp.set_preferences({
     }
 })
 
-lsp.on_attach(function(client, bufnr)
-    local opts = { buffer = bufnr, remap = false }
-    lsp.buffer_autoformat()
 
-    vim.keymap.set("n", "gd", function() vim.lsp.buf.definition() end, opts)
-    vim.keymap.set("n", "K", function() vim.lsp.buf.hover() end, opts)
-    -- vim.keymap.set("n", "<leader>fs", function() vim.lsp.buf.workspace_symbol() end, opts)
-    vim.keymap.set("n", "<leader>vd", function() vim.diagnostic.open_float() end, opts)
-    vim.keymap.set("n", "[d", function() vim.diagnostic.goto_next() end, opts)
-    vim.keymap.set("n", "]d", function() vim.diagnostic.goto_prev() end, opts)
-    vim.keymap.set("n", "ga", function() vim.lsp.buf.code_action() end, opts)
-    vim.keymap.set("n", "gr", function() vim.lsp.buf.references() end, opts)
-    vim.keymap.set("n", "<leader>r", function() vim.lsp.buf.rename() end, opts)
-    vim.keymap.set("i", "gh", function() vim.lsp.buf.signature_help() end, opts)
-end)
-
+lsp.on_attach(on_attach)
 lsp.setup()
 
 vim.diagnostic.config({
