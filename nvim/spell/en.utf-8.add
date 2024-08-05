@@ -12,3 +12,5 @@ WebSockets
 Dockerfile
 print/!
 public/!
+testTlsWithDemoServer
+duplicate_window/!
