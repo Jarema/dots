@@ -78,6 +78,7 @@ return require('packer').startup(function(use)
     use("eandrju/cellular-automaton.nvim")
     use("laytan/cloak.nvim")
     use("rhysd/vim-fixjson")
+    use("sindrets/diffview.nvim")
     use("tpope/vim-commentary")
     use {
         "windwp/nvim-autopairs",
