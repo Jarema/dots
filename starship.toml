@@ -1,4 +1,13 @@
+# Get editor completions based on the config schema
+"$schema" = 'https://starship.rs/config-schema.json'
+
 [gcloud]
 disabled = true
 [swift]
 disabled = true
+
+[custom.nats]
+command = "head -n 1 ~/.config/nats/context.txt"
+when = true
+shell = "/bin/sh"
+symbol = " "
