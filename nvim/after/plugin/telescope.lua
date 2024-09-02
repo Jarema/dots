@@ -13,3 +13,17 @@ vim.keymap.set('n', '<leader>ps', function()
 end)
 vim.keymap.set('n', '<leader>fh', builtin.help_tags, {})
 vim.keymap.set('n', '<leader>ft', ':Telescope treesitter<CR>', {})
+
+require('telescope').setup {
+    defaults = {
+        mappings = {
+            n = {
+                ['<c-d>'] = require('telescope.actions').delete_buffer
+            }, -- n
+            i = {
+                ["<C-h>"] = "which_key",
+                ['<c-d>'] = require('telescope.actions').delete_buffer
+            } -- i
+        }
+    },
+}
