@@ -148,6 +148,7 @@ require('lazy').setup({
     "rhysd/vim-fixjson",
     "sindrets/diffview.nvim",
     "tpope/vim-commentary",
+    "nvim-pack/nvim-spectre",
     {
         "windwp/nvim-autopairs",
         config = function() require("nvim-autopairs").setup {} end
@@ -210,5 +211,23 @@ require('lazy').setup({
             { "R",     mode = { "o", "x" },      function() require("flash").treesitter_search() end, desc = "Treesitter Search" },
             { "<c-s>", mode = { "c" },           function() require("flash").toggle() end,            desc = "Toggle Flash Search" },
         },
-    }
+    },
+    {
+        "LintaoAmons/bookmarks.nvim",
+        tag = "v1.4.2", -- optional, pin the plugin at specific version for stability
+        dependencies = {
+            { "nvim-telescope/telescope.nvim" },
+            { "stevearc/dressing.nvim" } -- optional: to have the same UI shown in the GIF
+        }
+    },
+    {
+        "toppair/peek.nvim",
+        event = { "VeryLazy" },
+        build = "deno task --quiet build:fast",
+        config = function()
+            require("peek").setup()
+            vim.api.nvim_create_user_command("PeekOpen", require("peek").open, {})
+            vim.api.nvim_create_user_command("PeekClose", require("peek").close, {})
+        end,
+    },
 })
