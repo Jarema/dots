@@ -104,6 +104,7 @@ require('lazy').setup({
             },
         },
     },
+    { "folke/neoconf.nvim" },
     {
         'nvim-treesitter/nvim-treesitter',
         build = function()
@@ -121,7 +122,7 @@ require('lazy').setup({
     "tpope/vim-fugitive",
     {
         'VonHeikemen/lsp-zero.nvim',
-        branch = 'v1.x',
+        branch = 'v3.x',
         dependencies = {
             -- LSP Support
             { 'neovim/nvim-lspconfig' },
@@ -230,4 +231,13 @@ require('lazy').setup({
             vim.api.nvim_create_user_command("PeekClose", require("peek").close, {})
         end,
     },
+    {
+        "greggh/claude-code.nvim",
+        dependencies = {
+            "nvim-lua/plenary.nvim", -- Required for git operations
+        },
+        config = function()
+            require("claude-code").setup()
+        end
+    }
 })
