@@ -50,7 +50,31 @@ require('mason-lspconfig').setup({
                 }
             })
         end,
+        rust_analyzer = function()
+            local lspconfig = require('lspconfig')
+            lspconfig.rust_analyzer.setup({
+                settings = {
+                    ["rust-analyzer"] = {
+                        check = {
+                            command = "clippy",
+                            extraArgs = { "--all-targets", "--all-features" }
+                        }
+                    }
+                }
+            })
+        end,
     }
+})
+
+-- Mason integration for none-ls (only linters, formatting is handled by LSP)
+require('mason-null-ls').setup({
+    ensure_installed = {
+        'golangci-lint',  -- Go linter
+        -- Note: formatting is handled by gopls and rust-analyzer
+        -- Note: clippy is integrated with rust-analyzer
+    },
+    automatic_installation = true,
+    handlers = {},
 })
 
 local lspconfig = require('lspconfig')

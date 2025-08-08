@@ -142,6 +142,14 @@ require('lazy').setup({
             { 'rafamadriz/friendly-snippets' },
         }
     },
+    {
+        "nvimtools/none-ls.nvim",
+        dependencies = {
+            "nvim-lua/plenary.nvim",
+            "nvimtools/none-ls-extras.nvim",
+            "jay-babu/mason-null-ls.nvim",
+        }
+    },
     "lewis6991/gitsigns.nvim",
     "github/copilot.vim",
     "eandrju/cellular-automaton.nvim",
