@@ -3,6 +3,9 @@ require("neoconf").setup({})
 local lsp_zero = require("lsp-zero")
 
 lsp_zero.on_attach(function(client, bufnr)
+    -- Force consistent offset encoding
+    client.server_capabilities.positionEncoding = "utf-16"
+
     local opts = { buffer = bufnr, remap = false }
     
     vim.keymap.set("n", "gd", function() vim.lsp.buf.definition() end, opts)
