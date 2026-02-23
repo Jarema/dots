@@ -3,11 +3,16 @@ local diagnostics = null_ls.builtins.diagnostics
 
 -- Setup none-ls with linters only (formatting is handled by LSP)
 null_ls.setup({
+    -- Force consistent offset encoding with other LSP clients
+    on_attach = function(client, bufnr)
+        client.server_capabilities.positionEncoding = "utf-16"
+    end,
     sources = {
         -- Go linting with golangci-lint
         diagnostics.golangci_lint.with({
             extra_args = { "--fast" }, -- Use fast mode for better performance
         }),
+        -- Note: Clippy is handled by rust-analyzer, not none-ls
     },
     
     -- Configure diagnostic display
@@ -24,25 +29,32 @@ null_ls.setup({
 vim.api.nvim_create_user_command("Lint", function()
     local ft = vim.bo.filetype
     
-    -- For Rust files, use cargo clippy
+    -- Save file first
+    vim.cmd("silent! write")
+    
     if ft == "rust" then
-        -- Run cargo clippy and capture output
-        vim.notify("Running cargo clippy...")
-        vim.fn.jobstart("cargo clippy --message-format=short", {
-            on_exit = function(_, exit_code)
-                if exit_code == 0 then
-                    vim.notify("Clippy check complete - no issues found")
-                else
-                    vim.notify("Clippy check complete - see diagnostics")
-                end
-                -- Trigger LSP to re-check for diagnostics
-                vim.cmd("silent! write")
-                vim.cmd("LspRestart")
+        -- For Rust, save and refresh diagnostics
+        vim.notify("Running clippy...")
+        -- Force rust-analyzer to refresh by toggling diagnostics
+        local clients = vim.lsp.get_active_clients({ bufnr = 0 })
+        for _, client in ipairs(clients) do
+            if client.name == "rust_analyzer" then
+                -- Clear and refresh diagnostics
+                vim.diagnostic.reset(nil, 0)
+                -- Force a workspace reload to trigger clippy
+                client.request("rust-analyzer/reloadWorkspace", nil, function(err, result)
+                    if err then
+                        -- If reload workspace doesn't work, try just saving again to trigger check
+                        vim.cmd("silent! write")
+                    end
+                end, 0)
             end
-        })
+        end
     else
-        -- For other languages, just save to trigger linters
-        vim.cmd("silent! write")
+        -- For other languages, refresh none-ls
+        vim.notify("Running linters...")
+        require("null-ls").toggle({})  -- Toggle off and on to force refresh
+        require("null-ls").toggle({})
     end
     
     -- Show diagnostic summary after a delay
@@ -56,7 +68,7 @@ vim.api.nvim_create_user_command("Lint", function()
         local msg = string.format("Linting complete: %d errors, %d warnings, %d info, %d hints", 
             error_count, warning_count, info_count, hint_count)
         vim.notify(msg)
-    end, 1000)
+    end, 3000)  -- Increased delay to allow clippy to complete
 end, { desc = "Run linter for current buffer" })
 
 -- Create keybinding for linting

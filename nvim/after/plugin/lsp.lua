@@ -58,10 +58,15 @@ require('mason-lspconfig').setup({
             lspconfig.rust_analyzer.setup({
                 settings = {
                     ["rust-analyzer"] = {
-                        check = {
+                        checkOnSave = {
                             command = "clippy",
-                            extraArgs = { "--all-targets", "--all-features" }
-                        }
+                        },
+                        cargo = {
+                            allFeatures = true,
+                        },
+                        procMacro = {
+                            enable = true,
+                        },
                     }
                 }
             })
