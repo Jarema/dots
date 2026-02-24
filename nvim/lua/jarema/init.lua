@@ -121,11 +121,8 @@ require('lazy').setup({
     "mbbill/undotree",
     "tpope/vim-fugitive",
     {
-        'VonHeikemen/lsp-zero.nvim',
-        branch = 'v3.x',
+        'neovim/nvim-lspconfig',
         dependencies = {
-            -- LSP Support
-            { 'neovim/nvim-lspconfig' },
             { 'williamboman/mason.nvim' },
             { 'williamboman/mason-lspconfig.nvim' },
 
