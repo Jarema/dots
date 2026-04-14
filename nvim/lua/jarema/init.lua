@@ -2,14 +2,9 @@ require("jarema.set")
 require("jarema.remap")
 
 local augroup = vim.api.nvim_create_augroup
-local ThePrimeagenGroup = augroup('ThePrimeagen', {})
-
 local autocmd = vim.api.nvim_create_autocmd
 local yank_group = augroup('HighlightYank', {})
-
-function R(name)
-    require("plenary.reload").reload_module(name)
-end
+local trim_group = augroup('TrimWhitespace', {})
 
 autocmd('TextYankPost', {
     group = yank_group,
@@ -23,7 +18,7 @@ autocmd('TextYankPost', {
 })
 
 autocmd({ "BufWritePre" }, {
-    group = ThePrimeagenGroup,
+    group = trim_group,
     pattern = "*",
     command = [[%s/\s\+$//e]],
 })
@@ -53,7 +48,7 @@ vim.opt.rtp:prepend(lazypath)
 require('lazy').setup({
     {
         'nvim-telescope/telescope.nvim',
-        tag = '0.1.4',
+        tag = 'v0.2.1',
         dependencies = { { 'nvim-lua/plenary.nvim' } }
     },
     {
@@ -69,7 +64,7 @@ require('lazy').setup({
     },
     {
         "folke/trouble.nvim",
-        opts = {}, -- for default options, refer to the configuration section for custom setup.
+        opts = {},
         cmd = "Trouble",
         keys = {
             {
@@ -117,7 +112,11 @@ require('lazy').setup({
             "nvim-treesitter/nvim-treesitter-context",
         }
     },
-    "theprimeagen/harpoon",
+    {
+        "theprimeagen/harpoon",
+        branch = "harpoon2",
+        dependencies = { "nvim-lua/plenary.nvim" },
+    },
     "mbbill/undotree",
     "tpope/vim-fugitive",
     {
@@ -125,50 +124,41 @@ require('lazy').setup({
         dependencies = {
             { 'williamboman/mason.nvim' },
             { 'williamboman/mason-lspconfig.nvim' },
-
-            -- Autocompletion
-            { 'hrsh7th/nvim-cmp' },
-            { 'hrsh7th/cmp-buffer' },
-            { 'hrsh7th/cmp-path' },
-            { 'saadparwaiz1/cmp_luasnip' },
-            { 'hrsh7th/cmp-nvim-lsp' },
-            { 'hrsh7th/cmp-nvim-lua' },
-
-            -- Snippets
-            { 'L3MON4D3/LuaSnip' },
-            { 'rafamadriz/friendly-snippets' },
         }
     },
     {
-        "nvimtools/none-ls.nvim",
-        dependencies = {
-            "nvim-lua/plenary.nvim",
-            "nvimtools/none-ls-extras.nvim",
-            "jay-babu/mason-null-ls.nvim",
-        }
+        'saghen/blink.cmp',
+        version = '*',
+        dependencies = { 'rafamadriz/friendly-snippets' },
+        opts = {
+            keymap = {
+                preset = 'none',
+                ['<C-p>'] = { 'select_prev', 'fallback' },
+                ['<C-n>'] = { 'select_next', 'fallback' },
+                ['<CR>'] = { 'accept', 'fallback' },
+                ['<C-Space>'] = { 'show', 'fallback' },
+            },
+            sources = {
+                default = { 'lsp', 'path', 'snippets', 'buffer' },
+            },
+        },
     },
+    {
+        "stevearc/conform.nvim",
+        opts = {
+            format_on_save = {
+                timeout_ms = 500,
+                lsp_format = "fallback",
+            },
+        },
+    },
+    { "mfussenegger/nvim-lint" },
     "lewis6991/gitsigns.nvim",
     "github/copilot.vim",
     "eandrju/cellular-automaton.nvim",
     "laytan/cloak.nvim",
-    "rhysd/vim-fixjson",
     "sindrets/diffview.nvim",
-    "tpope/vim-commentary",
     "nvim-pack/nvim-spectre",
-    {
-        "windwp/nvim-autopairs",
-        config = function() require("nvim-autopairs").setup {} end
-    },
-    {
-        "kylechui/nvim-surround",
-        version = "*", -- Use for stability; omit to use `main` branch for the latest features
-        event = "VeryLazy",
-        config = function()
-            require("nvim-surround").setup({
-                -- Configuration here, or leave empty to use defaults
-            })
-        end
-    },
     {
         'nvim-lualine/lualine.nvim',
         dependencies = { 'nvim-tree/nvim-web-devicons', opt = true }
@@ -183,27 +173,10 @@ require('lazy').setup({
         config = function()
             vim.o.timeout = true
             vim.o.timeoutlen = 300
-            require("which-key").setup {
-                -- your configuration comes here
-                -- or leave it empty to use the default settings
-                -- refer to the configuration section below
-            }
+            require("which-key").setup {}
         end
     },
-    {
-        'xbase-lab/xbase',
-        build = 'make install', -- or "make install && make free_space" (not recommended, longer build time)
-        dependencies = {
-            "neovim/nvim-lspconfig",
-            -- "nvim-telescope/telescope.nvim", -- optional
-            -- "nvim-lua/plenary.nvim", -- optional/requirement of telescope.nvim
-            -- "stevearc/dressing.nvim", -- optional (in case you don't use telescope but something else)
-        },
-        config = function()
-            require 'xbase'.setup({}) -- see default configuration bellow
-        end
-    },
-    { "stevearc/dressing.nvim", opts = {} },
+{ "stevearc/dressing.nvim", opts = {} },
     {
         "folke/flash.nvim",
         event = "VeryLazy",
@@ -220,10 +193,10 @@ require('lazy').setup({
     },
     {
         "LintaoAmons/bookmarks.nvim",
-        tag = "v1.4.2", -- optional, pin the plugin at specific version for stability
+        tag = "v1.4.2",
         dependencies = {
             { "nvim-telescope/telescope.nvim" },
-            { "stevearc/dressing.nvim" } -- optional: to have the same UI shown in the GIF
+            { "stevearc/dressing.nvim" }
         }
     },
     {
@@ -239,7 +212,7 @@ require('lazy').setup({
     {
         "greggh/claude-code.nvim",
         dependencies = {
-            "nvim-lua/plenary.nvim", -- Required for git operations
+            "nvim-lua/plenary.nvim",
         },
         config = function()
             require("claude-code").setup()
